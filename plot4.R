@@ -1,0 +1,58 @@
+
+# Preparing Data 
+data<-read.delim("household_power_consumption.txt", header=TRUE, sep=";", na.strings="?",)
+data_Feb<-subset(data, Date %in% c("1/2/2007","2/2/2007"))
+remove (data)
+
+Date_new<-as.Date(data_Feb$Date, format = "%d/%m/%Y")
+datetime<-strptime(paste(data_Feb$Date,data_Feb$Time), format("%d/%m/%Y %H:%M:%S") )
+data_Feb<-cbind(data_Feb, Date_new ,datetime )
+remove(datetime, Date_new)
+
+# Setting language
+Sys.setlocale("LC_ALL", "English")
+
+
+# plot 4
+
+par(mfrow=c(2,2)) 
+
+with(data_Feb,{
+  plot(datetime,Global_active_power,
+       type="l",
+       xlab=" ",
+       ylab="Global Active Power"
+  )
+  
+  plot(datetime,Voltage, type="l")
+  
+  plot(datetime,Sub_metering_1,
+       type="l",
+       xlab=" ",
+       ylab="Energy Sub Metering",
+       col="black"
+  )
+  points(datetime,Sub_metering_2,
+         type="l",
+         xlab=" ",
+         ylab=" ",
+         col="red"
+  )
+  points(datetime,Sub_metering_3,
+         type="l",
+         xlab=" ",
+         ylab=" ",
+         col="blue"
+  )
+  legend("topright", lty =1, col = c("black", "red", "blue"), cex=0.8, bty="n",
+         legend=c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3")
+  ) 
+  
+  plot(datetime,Global_reactive_power, type="l")
+})
+
+
+# Save the plot to a PNG file 
+png(file="plot4.png", width = 480, height = 480)
+dev.off()
+
